@@ -2,7 +2,15 @@
 
 ## About
 
+Prints a bibliography of the selected entries.
+
 ## Usage
+
+In order to print a bibliography run
+
+```python3
+papis export -f bibliography [QUERY]
+```
 
 ## Installation
 
