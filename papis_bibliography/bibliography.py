@@ -5,22 +5,40 @@ from papis.document import Document, to_dict
 
 
 def to_authors(author_list: List[dict]) -> str:
+    if len(author_list) < 1:
+        return ""
+
+    key = ""
+    if "surname" in author_list[0].keys():
+        key = "surname"
+    elif "family" in author_list[0].keys():
+        key = "family"
+
     if len(author_list) > 3:
-        return author_list[0]["surname"] + " et. al."
+        surname = author_list[0][key] or "" 
+        return surname + " et. al."
     else:
-        return ", ".join([author["surname"] for author in author_list[0:3]])
+        return ", ".join([author[key] or "" for author in author_list])
 
 
 def to_bibliography(document: dict) -> str:
-    year = document["year"]
-    authors = to_authors(document["author_list"])
-    title = document["title"]
-    doi = document["doi"]
-    bibliography = "{year}; {authors}; \"{title}\"; doi: {doi}".format(
+    year = document["year"] or ""
+    authors = to_authors(document["author_list"]) or ""
+    title = document["title"] or ""
+    doi_or_isbn = ""
+    if "doi" in document.keys():
+        doi_or_isbn = "doi: " + document["doi"]
+    if "DOI" in document.keys():
+        doi_or_isbn = "doi: " + document["DOI"]
+    elif "isbn" in document.keys():
+        doi_or_isbn = "isbn: " + document["isbn"]
+    elif "ISBN" in document.keys():
+        doi_or_isbn = "isbn: " + document["ISBN"]
+    bibliography = "{year}; {authors}; \"{title}\"; {doi_or_isbn}".format(
         year = year,
         authors = authors,
         title = title,
-        doi = doi,
+        doi_or_isbn = doi_or_isbn,
     )
     return bibliography
 
